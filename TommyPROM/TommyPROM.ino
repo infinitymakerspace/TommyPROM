@@ -6,7 +6,7 @@
 * This is available in a number of terminal programs, such as
 * TeraTerm and Minicom.
 *
-* leomil72: This version has been modified to use two 74LS164 shift registers as the low and
+* leomil72: This version has been modified to use two 74HC595 shift registers as the low and
 * high address registers (26/01/2019)
 **/
 
