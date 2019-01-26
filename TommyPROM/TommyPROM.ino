@@ -6,8 +6,8 @@
 * This is available in a number of terminal programs, such as
 * TeraTerm and Minicom.
 *
-* The hardware uses two 74LS164 shift registers as the low and
-* high address registers.
+* leomil72: This version has been modified to use two 74LS164 shift registers as the low and
+* high address registers (26/01/2019)
 **/
 
 #include "Configure.h"
@@ -681,4 +681,3 @@ void loop()
         cmdStatus.printStatus();
     }
 }
-

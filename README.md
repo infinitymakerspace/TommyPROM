@@ -5,7 +5,7 @@ The original code was specific to the 28C256 32Kx8 EEPROM, but it has been exten
 
 The 28C design can be used with other 5V EEPROMS as well. Many 5V chips, including UV EPROMs, such as the 2716, 2764, 27C2001 and 27C040, can be read, but not written, with the basic hardware. Some pin changes may be needed to get the signals to the correct pins on the device.  See the [extension readme](README-extension.md) for details on suggested hardware and software changes needed to support new EPROM and EEPROM families.
 
-The PROM-specific code is modular and can be easily adapted to support additional devices. There are currently drivers and hardware designs for 28C series EEPROMS and the Intel 8755A EPROM. Larger PROMs can be read or written in 64K chunks.
+The EEPROM-specific code is modular and can be easily adapted to support additional devices. There are currently drivers and hardware designs for 28C series EEPROMS and the Intel 8755A EPROM. Larger EEPROMs can be read or written in 64K chunks.
 
 Features include:
 * Simple hardware design that can be assembled on a breadboard.
@@ -18,20 +18,20 @@ The [hardware readme](hardware/README.md) has schematics and more information on
 
 The project was inspired by the [MEEPROMMER programmer](http://www.ichbinzustaendig.de/dev/meeprommer-en).
 
-![TommyPROM Nano Hardware](docs/TommyPROM-nano.jpg)
+![TommyPROM Uno Hardware](docs/TommyPROM-uno.jpg)
 
 ## Compiling
 
-Open the TommyPROM.ino file in the Arduino IDE. It should automatically open the cpp and h files as well. The default code programs 28C series chips using Arduino Nano hardware.  To use this version, just compile and upload it to the Arduino.
+Open the TommyPROM.ino file in the Arduino IDE. It should automatically open the cpp and h files as well. The default code programs 28C series chips using Arduino Uno hardware.  To use this version, just compile and upload it to the Arduino.
 
-For different Arduino hardware, like UNO or Micro, edit the Configure.h file and uncomment the appropriate ARDUINO_IS_xx line. Only one of these lines should be uncommented. If all of these lines are commented out, the generic bit at a time code is used to write to the data bus. This will work on all Arduinos, but it is slower that the model-specific code.
+For different Arduino hardware, like Nano or Micro, edit the Configure.h file and uncomment the appropriate ARDUINO_IS_xx line. Only one of these lines should be uncommented. If all of these lines are commented out, the generic bit at a time code is used to write to the data bus. This will work on all Arduinos, but it is slower that the model-specific code.
 
 To use the 8755A version of the code and matching hardware, uncomment PROM_IS_8755A and comment out the other PROM_IS_xx choices.
 
 ## Operation
 ![TommyPROM Screenshot](docs/tp05.png)
 
-To use the programmer, connect the Arduino USB to the host computer and run a terminal program, such as TeraTerm (Windows) or Minicom (Linux).  The Arduino development Serial Monitor can also be used as a terminal initially, but it does not support XMODEM transfers, so the READ and WRITE commands can't be used.
+To use the programmer, connect the Arduino USB to the host computer and run a terminal program, such as TeraTerm (Windows) or Minicom (Linux) or CoolTerm (Mac).  The Arduino development Serial Monitor can also be used as a terminal initially, but it does not support XMODEM transfers, so the READ and WRITE commands can't be used.
 
 Set the terminal's serial parameters to 115200 baud, 8 bits, no parity, 1 stop bit to match the Arduino.  Press the Enter key.  If the connection is successful, TommyPROM will display a menu of options.
 
