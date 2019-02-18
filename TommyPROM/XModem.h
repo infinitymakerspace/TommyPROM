@@ -27,6 +27,7 @@ class XModem
     void Cancel();
 
   private:
+    const byte GREEN_LED = 11;
     enum
     {
         // XMODEM control characters.
@@ -55,4 +56,3 @@ class XModem
 };
 
 #endif // #define INCLUDE_CONFIGURE_H
-

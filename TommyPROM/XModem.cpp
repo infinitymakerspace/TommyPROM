@@ -142,7 +142,7 @@ uint16_t XModem::UpdateCrc(uint16_t crc, uint8_t data)
         {
             crc = (crc << 1) ^ 0x1021;
         }
-        else
+         else
         {
             crc <<= 1;
         }
@@ -160,14 +160,19 @@ bool XModem::StartReceive()
         // of the file responds with something.  The start character will be sent once a
         // second for a number of seconds.  If nothing is received in that time then
         // return false to indicate that the transfer did not start.
+        digitalWrite(GREEN_LED, HIGH);
         Serial.write('C');
         for (int ms = 1000; (ms); --ms)
         {
             if (Serial.available() > 0)
             {
+                digitalWrite(GREEN_LED, HIGH);
                 return true;
             }
             delay(1);
+            if (ms < 500) {
+              digitalWrite(GREEN_LED, LOW);
+            }
         }
     }
 
@@ -251,6 +256,3 @@ void XModem::SendPacket(uint16_t address, uint8_t seq)
     Serial.write(crc >> 8);
     Serial.write(crc & 0xff);
 }
-
-
-

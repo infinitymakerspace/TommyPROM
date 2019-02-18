@@ -6,8 +6,9 @@
 * This is available in a number of terminal programs, such as
 * TeraTerm and Minicom.
 *
-* leomil72: This version has been modified to use two 74HC595 shift registers as the low and
-* high address registers (26/01/2019)
+* leomil72:
+* 26/01/2019: changes to use two 74LS595 shift registers to address the ROM chips
+* 18/02/2019: added 2 LEDs for status control
 **/
 
 #include "Configure.h"
@@ -105,7 +106,7 @@ char * readLine(char * buffer, int len)
             buffer[ix++] = c;
             Serial.write(c);
         }
-    } while ((c != '\n' || c != '\l') && (ix < len));
+    } while ((c != '\n') && (c != '\r') && (ix < len));
 
     buffer[ix - 1] = 0;
     return buffer;
@@ -523,7 +524,8 @@ void zapTest(word start)
 * MAIN
 *************************************************/
 word addr = 0;
-
+const byte GREEN_LED = 11;
+const byte RED_LED = 12;
 void setup()
 {
     // Do this first so that it initializes all of the hardware pins into a
@@ -531,7 +533,20 @@ void setup()
     // if both writing to the data bus at the same time.
     prom.begin();
 
+    pinMode(GREEN_LED, OUTPUT);
+    pinMode(RED_LED, OUTPUT);
+    for (byte i = 0; i<3; i++) {
+      digitalWrite(GREEN_LED, HIGH);
+      digitalWrite(RED_LED, HIGH);
+      delay(30);
+      digitalWrite(GREEN_LED, LOW);
+      digitalWrite(RED_LED, LOW);
+      delay(30);
+    }
+    digitalWrite(GREEN_LED, HIGH);
     Serial.begin(115200);
+    delay(1000);
+    Serial.println(F("Welcome to TommyPROM 1.7"));
 }
 
 
@@ -588,6 +603,7 @@ void loop()
     switch (cmd)
     {
     case CMD_CHECKSUM:
+        digitalWrite(RED_LED, HIGH);
         w = checksumBlock(start, end);
         Serial.print("Checksum ");
         printWord(start);
@@ -596,37 +612,50 @@ void loop()
         Serial.print(" = ");
         printWord(w);
         Serial.println();
+        digitalWrite(RED_LED, LOW);
         break;
 
     case CMD_DUMP:
+        digitalWrite(RED_LED, HIGH);
         dumpBlock(start, end);
+        digitalWrite(RED_LED, LOW);
         break;
 
     case CMD_ERASED:
+        digitalWrite(RED_LED, HIGH);
         erasedBlockCheck(start, end);
+        digitalWrite(RED_LED, LOW);
         break;
 
     case CMD_FILL:
+        digitalWrite(RED_LED, HIGH);
         fillBlock(start, end, val);
+        digitalWrite(RED_LED, LOW);
         break;
 
     case CMD_READ:
         Serial.println(F("Set the terminal to receive XMODEM CRC"));
+        digitalWrite(RED_LED, HIGH);
         if (xmodem.SendFile(start, uint32_t(end) - start + 1))
         {
             cmdStatus.info("Send complete.");
             cmdStatus.setValueDec(0, "NumBytes", uint32_t(end) - start + 1);
         }
+        digitalWrite(RED_LED, LOW);
         break;
 
     case CMD_UNLOCK:
         Serial.println(F("Writing the unlock code to disable Software Write Protect mode."));
+        digitalWrite(RED_LED, HIGH);
         prom.disableSoftwareWriteProtect();
+        digitalWrite(RED_LED, LOW);
         break;
 
     case CMD_WRITE:
         Serial.println(F("Send the image file using XMODEM CRC"));
+        digitalWrite(RED_LED, HIGH);
         numBytes = xmodem.ReceiveFile(start);
+        digitalWrite(RED_LED, LOW);
         if (numBytes)
         {
             cmdStatus.info("Success writing to EEPROM device.");
@@ -640,15 +669,21 @@ void loop()
 
 #ifdef ENABLE_DEBUG_COMMANDS
     case CMD_SCAN:
+        digitalWrite(RED_LED, HIGH);
         scanBlock(start, end);
+        digitalWrite(RED_LED, LOW);
         break;
 
     case CMD_TEST:
+        digitalWrite(RED_LED, HIGH);
         testAddr(start);
+        digitalWrite(RED_LED, LOW);
         break;
 
     case CMD_ZAP:
+        digitalWrite(RED_LED, HIGH);
         zapTest(start);
+        digitalWrite(RED_LED, LOW);
         break;
 #endif /* ENABLE_DEBUG_COMMANDS */
 
@@ -657,7 +692,7 @@ void loop()
         break;
 
     default:
-        Serial.println(F("TommyPROM 1.6\n"));
+        Serial.println(F("TommyPROM 1.7\n"));
         Serial.println(F("Valid commands are:"));
         Serial.println(F("  Cssss eeee    - Compute checksum from device"));
         Serial.println(F("  Dssss eeee    - Dump bytes from device to terminal"));
